@@ -1,0 +1,87 @@
+{% extends 'finance/base.html' %}
+
+{% block title %}Spending{% endblock %}
+
+{% block script %}
+  <script>
+    var ctx = document.getElementById('accounts');
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [{% for date, _, _ in profile.spending_history %}'{{ date|date:'M y' }}', {% endfor %}],
+        datasets: [
+          {
+            label: 'Difference',
+            type: 'line',
+            borderColor: 'rgb(40, 40, 40)',
+            data: [{% for _, income, spending in profile.spending_history %}'{{ income|add:spending }}', {% endfor %}],
+          },
+          {
+            label: 'Income',
+            backgroundColor: 'rgb(46, 204, 113)',
+            borderColor: 'rgb(39, 174, 96)',
+            data: [{% for _, income, _ in profile.spending_history %}'{{ income }}', {% endfor %}],
+          },
+          {
+            label: 'Spending',
+            backgroundColor: 'rgb(231, 76, 60)',
+            borderColor: 'rgb(192, 57, 43)',
+            data: [{% for _, _, spending in profile.spending_history %}'{{ spending }}', {% endfor %}],
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            stacked: true,
+          }],
+          yAxes: [{
+            stacked: true
+          }],
+        }
+      }
+    });
+  </script>
+
+  {% for account in profile.account_set.all %}
+    <script>
+      var ctx = document.getElementById("account-{{ forloop.counter0 }}");
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [{% for date, _, _ in account.spending_history %}'{{ date |date:'M y' }}', {% endfor %}],
+          datasets: [
+            {
+              label: 'Difference',
+              type: 'line',
+              borderColor: 'rgb(40, 40, 40)',
+              data: [{% for _, income, spending in account.spending_history %}'{{ income|add:spending }}', {% endfor %}],
+            },
+            {
+              label: 'Income',
+              backgroundColor: 'rgb(46, 204, 113)',
+              borderColor: 'rgb(39, 174, 96)',
+              data: [{% for _, income, _ in account.spending_history %}'{{ income }}', {% endfor %}],
+            },
+            {
+              label: 'Spending',
+              backgroundColor: 'rgb(231, 76, 60)',
+              borderColor: 'rgb(192, 57, 43)',
+              data: [{% for _, _, spending in account.spending_history %}'{{ spending }}', {% endfor %}],
+            }
+          ]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              stacked: true,
+            }],
+            yAxes: [{
+              stacked: true
+            }],
+          }
+        }
+      });
+    </script>
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'finance/base.html' %}
+
+{% block title %}Balance{% endblock %}
+
+{% block script %}
+  <script>
+    var ctx = document.getElementById('accounts');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: 'Balance',
+            borderColor: 'rgb(40, 40, 40)',
+            fill: false,
+            data: [
+              {% for date, balance in profile.balance_history %}
+                {x: "{{ date|date:'c' }}", y: {{ balance }}},
+              {% endfor %}
+            ]
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {unit: 'month'},
+          }]
+        }
+      }
+    });
+  </script>
+
+  {% for account in profile.account_set.all %}
+    <script>
+      var ctx = document.getElementById("account-{{ forloop.counter0 }}");
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            label: 'Balance',
+            borderColor: '{{ account.colour }}',
+            fill: false,
+            data: [
+              {% for date, balance in account.balance_history %}
+                {x: '{{ date|date:'c' }}', y: {{ balance }}},
+              {% endfor %}
+            ]
+          }]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {unit: 'month'},
+            }]
+          }
+        }
+      });
+    </script>
+  {% endfor %}
+{% endblock %}

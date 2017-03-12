@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{% block title %}{% endblock %}</h2>
+
+  <br />
+
+  <div class="card">
+    <div class="card-block">
+      <p class="card-text">Current Balance: £{{ profile.balance }}</p>
+    </div>
+
+    <canvas id="accounts" width="200" height="100"></canvas>
+  </div>
+
+  <br />
+
+  <div class="card-deck">
+    {% for account in profile.account_set.all %}
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">{{ account.name }}</h4>
+          <p class="card-text">Current Balance: £{{ account.balance }}</p>
+        </div>
+
+        <canvas class="card-img-bottom" id="account-{{ forloop.counter0 }}" width="200" height="100"></canvas>
+      </div>
+
+      {% if forloop.counter|divisibleby:"2" %}
+        </div>
+        <br />
+        <div class="card-deck">
+      {% endif %}
+    {% endfor %}
+
+    {% if not profile.account_set.count|divisibleby:2 %}
+      <div class="card">
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
