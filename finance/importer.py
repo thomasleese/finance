@@ -6,8 +6,8 @@ from .models import Account, Transaction
 
 class Importer:
 
-    def __init__(self, user, filename):
-        self.user = user
+    def __init__(self, profile, filename):
+        self.profile = profile
         self.filename = filename
         self.obj = untangle.parse(filename)
         self.ofx = self.obj.OFX
@@ -36,7 +36,7 @@ class Importer:
         account_id = account_data.ACCTID.cdata
 
         account, created = Account.objects.update_or_create(
-            user=self.user,
+            profile=self.profile,
             bank_id=bank_id,
             account_id=account_id,
             defaults={'kind': kind}
@@ -60,6 +60,7 @@ class Importer:
 
             Transaction.objects.update_or_create(
                 account=account,
+                profile=self.profile,
                 transaction_id=transaction.FITID.cdata,
                 defaults=fields,
             )
